@@ -1,0 +1,14 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    volumes:
+      - ..:/workspaces/vpn-mvp:cached
+    command: sleep infinity
+    init: true
+    environment:
+      - GOFLAGS=-mod=mod
+      - PNPM_HOME=/usr/local/share/pnpm
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+      - "9222:9222"

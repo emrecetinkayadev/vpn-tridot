@@ -1,0 +1,16 @@
+{
+  "name": "vpn-mvp",
+  "dockerComposeFile": "docker-compose.dev.yaml",
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/vpn-mvp",
+  "postCreateCommand": "pnpm install --dir frontend && go mod tidy ./... || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}

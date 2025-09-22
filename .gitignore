@@ -1,0 +1,54 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies & builds
+node_modules/
+.pnpm-store/
+.next/
+dist/
+build/
+coverage/
+.tmp/
+
+backend/bin/
+node-agent/bin/
+frontend/.vercel/
+
+# Logs & runtime
+*.log
+*.pid
+*.out
+*.tmp
+*.swp
+
+# Env & secrets
+.env
+.env.*
+*.age
+*.key
+*.pem
+*.crt
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+
+# Docker
+**/.docker/
+
+# SBOM & scans
+tools/sbom/*.json
+tools/sbom/*.spdx
+
+# Misc
+*.DS_Store
