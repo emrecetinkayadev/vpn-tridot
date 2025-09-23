@@ -114,6 +114,11 @@ func (s *Service) ReportHealth(ctx context.Context, input HealthReportInput) (en
 	return s.repo.UpdateNodeHealth(ctx, input.NodeID, score)
 }
 
+// GetNodeByID exposes node metadata for other services.
+func (s *Service) GetNodeByID(ctx context.Context, id uuid.UUID) (entities.Node, error) {
+	return s.repo.GetNodeByID(ctx, id)
+}
+
 func computeCapacityScore(health HealthReportInput) int {
 	score := 100
 	score -= minInt(60, health.ActivePeers*4)

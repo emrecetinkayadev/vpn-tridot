@@ -38,6 +38,14 @@ type Dependencies struct {
 		Register(*gin.Context)
 		ReportHealth(*gin.Context)
 	}
+	PeersHandler interface {
+		List(*gin.Context)
+		Usage(*gin.Context)
+		Create(*gin.Context)
+		Rename(*gin.Context)
+		Delete(*gin.Context)
+		DownloadConfig(*gin.Context)
+	}
 }
 
 // Register wires the public routes for the API server.
@@ -55,7 +63,9 @@ func Register(engine *gin.Engine, cfg config.Config, deps Dependencies, logger *
 	})
 
 	api := engine.Group("/api/v1")
-	api.Use(middleware.RateLimit(cfg.RateLimit))
+	api.Use(middleware.CORS(cfg.Security.CORS))
+	api.Use(middleware.CSRFGuard(cfg.Security.CSRF))
+	api.Use(middleware.RateLimit(cfg.RateLimit.DefaultRule()))
 
 	if deps.BillingHandler != nil {
 		api.GET("/plans", deps.BillingHandler.ListPlans)
@@ -65,6 +75,7 @@ func Register(engine *gin.Engine, cfg config.Config, deps Dependencies, logger *
 	}
 
 	authGroup := api.Group("/auth")
+	authGroup.Use(middleware.RateLimit(cfg.RateLimit.Auth))
 	authGroup.POST("/signup", deps.AuthHandler.SignUp)
 	authGroup.POST("/verify-email", deps.AuthHandler.VerifyEmail)
 	authGroup.POST("/login", deps.AuthHandler.Login)
@@ -81,13 +92,26 @@ func Register(engine *gin.Engine, cfg config.Config, deps Dependencies, logger *
 	})
 
 	if deps.BillingHandler != nil {
-		protected.POST("/checkout", deps.BillingHandler.CreateCheckoutSession)
+		checkoutGroup := protected.Group("")
+		checkoutGroup.Use(middleware.RateLimit(cfg.RateLimit.Checkout))
+		checkoutGroup.POST("/checkout", deps.BillingHandler.CreateCheckoutSession)
+
 		protected.GET("/account/payments", deps.BillingHandler.ListPayments)
 		engine.POST("/api/v1/webhooks/stripe", deps.BillingHandler.StripeWebhook)
 	}
 	if deps.NodesHandler != nil {
 		engine.POST("/api/v1/nodes/register", deps.NodesHandler.Register)
 		engine.POST("/api/v1/nodes/health", deps.NodesHandler.ReportHealth)
+	}
+	if deps.PeersHandler != nil {
+		peersGroup := protected.Group("/peers")
+		peersGroup.Use(middleware.RateLimit(cfg.RateLimit.Peers))
+		peersGroup.GET("", deps.PeersHandler.List)
+		peersGroup.GET("/usage", deps.PeersHandler.Usage)
+		peersGroup.POST("", deps.PeersHandler.Create)
+		peersGroup.PATCH("/:peerID", deps.PeersHandler.Rename)
+		peersGroup.DELETE("/:peerID", deps.PeersHandler.Delete)
+		protected.GET("/peers/config/:token", deps.PeersHandler.DownloadConfig)
 	}
 
 	authProtected := protected.Group("/auth")

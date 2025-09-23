@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"os/signal"
 	"syscall"
 
@@ -12,13 +13,18 @@ import (
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/billing"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/config"
 	applogger "github.com/emrecetinkayadev/vpn-tridot/backend/internal/logger"
+	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/metrics"
+	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/peers"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/platform/hash"
+	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/platform/hcaptcha"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/platform/jwt"
+	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/platform/secrets"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/regions"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/handlers/auth"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/handlers/billing"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/handlers/nodes"
+	peershandler "github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/handlers/peers"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/handlers/regions"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/middleware"
 	"github.com/emrecetinkayadev/vpn-tridot/backend/internal/server/setup"
@@ -31,6 +37,22 @@ func main() {
 		log.Fatalf("load config: %v", err)
 	}
 
+	if os.Getenv("SECRETS_BOOTSTRAPPED") != "true" {
+		secretManager := secrets.NewManager(cfg.Security.Secrets)
+		if secretManager.Enabled() {
+			secretValues, err := secretManager.Load(context.Background())
+			if err != nil {
+				log.Fatalf("load secrets: %v", err)
+			}
+			secretManager.Apply(secretValues)
+			_ = os.Setenv("SECRETS_BOOTSTRAPPED", "true")
+			cfg, err = config.Load()
+			if err != nil {
+				log.Fatalf("reload config: %v", err)
+			}
+		}
+	}
+
 	logger, err := applogger.New(cfg.App.Env, cfg.Log.Level)
 	if err != nil {
 		log.Fatalf("init logger: %v", err)
@@ -38,6 +60,11 @@ func main() {
 	defer func() {
 		_ = logger.Sync()
 	}()
+
+	var metricsCollector *metrics.Collector
+	if cfg.Observability.Metrics.Enabled {
+		metricsCollector = metrics.NewCollector(cfg.Observability.Metrics.Namespace, cfg.Observability.Metrics.Subsystem)
+	}
 
 	store, err := postgres.New(context.Background(), cfg.Database)
 	if err != nil {
@@ -60,7 +87,8 @@ func main() {
 
 	authRepo := postgres.NewAuthRepository(store.Pool())
 	authService := auth.NewService(authRepo, hasher, jwtManager, cfg.Auth)
-	authHandler := authhandler.New(authService, logger)
+	hcaptchaVerifier := hcaptcha.New(cfg.Security.HCaptcha)
+	authHandler := authhandler.New(authService, hcaptchaVerifier, logger)
 	authMiddleware := middleware.Auth(jwtManager, logger)
 
 	regionsRepo := postgres.NewRegionsRepository(store.Pool())
@@ -85,15 +113,20 @@ func main() {
 	}
 	billingHandler := billinghandler.New(billingService, logger)
 
+	peersRepo := postgres.NewPeersRepository(store.Pool())
+	peersService := peers.NewService(peersRepo, regionsService, authRepo)
+	peersHandler := peershandler.New(peersService, logger)
+
 	deps := setup.Dependencies{
 		AuthHandler:    authHandler,
 		AuthMiddleware: authMiddleware,
 		BillingHandler: billingHandler,
 		RegionsHandler: regionHandler,
 		NodesHandler:   nodeHandler,
+		PeersHandler:   peersHandler,
 	}
 
-	srv := server.New(cfg, logger, deps)
+	srv := server.New(cfg, logger, deps, metricsCollector)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
