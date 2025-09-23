@@ -38,44 +38,44 @@
   - [x] Regions listesi (TR‑IST, TR‑IZM, EU-FRA/NL)
   - [x] Node kayıt/sağlık uç noktaları
   - [x] Kapasite puanı hesaplama (aktif peer, throughput, CPU)
-- [ ] Peer/cihaz yönetimi
-  - [ ] Peer CRUD (kullanıcı başına cihaz limiti)
-  - [ ] Client‑side public key kabulü ve doğrulama
-  - [ ] Server‑side key üretimi (opsiyon) + tek seferlik indirme
-  - [ ] Config üretimi (AllowedIPs, DNS, MTU, keepalive)
-  - [ ] İmzalı **tek‑kullanımlık** config URL’leri (TTL: 24h)
-  - [ ] QR kod oluşturma (PNG/SVG)
-- [ ] Kullanım görünürlüğü
-  - [ ] Son bağlantı zamanı, toplam up/down bayt
-  - [ ] Cihaz bazlı silme/yeniden adlandırma
-- [ ] Observability
-  - [ ] Prometheus metrics endpoint
-  - [ ] Yapılandırılabilir request logging + maskleme
-- [ ] Güvenlik
-  - [ ] Ratelimit (auth, checkout, peers)
-  - [ ] hCaptcha entegrasyonu (signup/login) — basit skor doğrulama
-  - [ ] CORS/CSRF ayarları
-  - [ ] Secret yönetimi: SOPS/Vault entegrasyonu
-- [ ] Testler
-  - [ ] Unit: auth, webhook, peers
-  - [ ] Integration: config üretimi, tek‑kullanımlık URL
-  - [ ] E2E: signup→checkout (mock)→peer create→config fetch
+- [x] Peer/cihaz yönetimi
+  - [x] Peer CRUD (kullanıcı başına cihaz limiti)
+  - [x] Client‑side public key kabulü ve doğrulama
+  - [x] Server‑side key üretimi (opsiyon) + tek seferlik indirme
+  - [x] Config üretimi (AllowedIPs, DNS, MTU, keepalive)
+  - [x] İmzalı **tek‑kullanımlık** config URL’leri (TTL: 24h)
+  - [x] QR kod oluşturma (PNG/SVG)
+- [x] Kullanım görünürlüğü
+  - [x] Son bağlantı zamanı, toplam up/down bayt
+  - [x] Cihaz bazlı silme/yeniden adlandırma
+- [x] Observability
+  - [x] Prometheus metrics endpoint
+  - [x] Yapılandırılabilir request logging + maskleme
+- [x] Güvenlik
+  - [x] Ratelimit (auth, checkout, peers)
+  - [x] hCaptcha entegrasyonu (signup/login) — basit skor doğrulama
+  - [x] CORS/CSRF ayarları
+  - [x] Secret yönetimi: SOPS/Vault entegrasyonu
+- [x] Testler
+  - [x] Unit: auth, webhook, peers
+  - [x] Integration: config üretimi, tek‑kullanımlık URL
+  - [x] E2E: signup→checkout (mock)→peer create→config fetch
 
 ## 2) Node Agent (Go)
-- [ ] İskelet
-  - [ ] mTLS client, token doğrulama
-  - [ ] Konfig yükleme (`env`, `file`)
-- [ ] WireGuard entegrasyonu
-  - [ ] `wg0` oluşturma, port yönetimi
-  - [ ] Peer ekleme/çıkarma, kalıcılık (`/etc/wireguard/*.conf`)
-  - [ ] MTU/keepalive/DNS ayarları
-  - [ ] iptables NAT + kill‑switch kuralları
-- [ ] Sağlık ve telemetri
-  - [ ] Handshake oranı, aktif peer sayısı, NIC throughput
-  - [ ] Prometheus exporter
-- [ ] Dayanıklılık
-  - [ ] Crash‑safe state, retry/backoff
-  - [ ] Drain modu (yeni peer kabul etme)
+- [x] İskelet
+  - [x] mTLS client, token doğrulama
+  - [x] Konfig yükleme (`env`, `file`)
+- [x] WireGuard entegrasyonu
+  - [x] `wg0` oluşturma, port yönetimi
+  - [x] Peer ekleme/çıkarma, kalıcılık (`/etc/wireguard/*.conf`)
+  - [x] MTU/keepalive/DNS ayarları
+  - [x] iptables NAT + kill‑switch kuralları
+- [x] Sağlık ve telemetri
+  - [x] Handshake oranı, aktif peer sayısı, NIC throughput
+  - [x] Prometheus exporter
+- [x] Dayanıklılık
+  - [x] Crash‑safe state, retry/backoff
+  - [x] Drain modu (yeni peer kabul etme)
 - [ ] Testler
   - [ ] Unit: wg sarmalayıcı, health reporter
   - [ ] Entegrasyon: backend mTLS çağrıları (mock CA)

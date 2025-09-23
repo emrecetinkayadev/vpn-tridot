@@ -140,16 +140,33 @@ repo-root/
 # Ayrıntılı örnek dosyalar için `backend/.env.example`, `backend/.env.development` ve `deploy/.env.production.example` dosyalarına bakın.
 ```
 
+Öne çıkan ayarlar:
+
+- `LOG_LEVEL=info` ve `LOG_REQUESTS_ENABLED=true` isteklere ait loglamayı kontrol eder.
+- `LOG_REQUEST_HEADERS`, `LOG_MASK_HEADERS`, `LOG_REQUEST_QUERY_PARAMS`, `LOG_MASK_QUERY_PARAMS` loglarda görünen alanları tanımlar.
+- `METRICS_ENABLED=true`, `METRICS_PATH=/metrics`, `METRICS_NAMESPACE=vpn_backend`, `METRICS_SUBSYSTEM=http` Prometheus endpoint yapılandırmasıdır.
+- `CORS_*` değişkenleri (origin/method/header listeleri) cross-site isteklerini yönetir; `CSRF_*` ayarları Origin denetimini açar.
+- `RATE_LIMIT_*` değerleri (global ve `AUTH/CHECKOUT/PEERS` için `_RPS`/`_BURST`) istek hızını sınırlar.
+- `HCAPTCHA_*` anahtarları (secret/sitekey/threshold) signup ve login hCaptcha doğrulamasını yönetir.
+- Secrets yönetimi: `SOPS_SECRETS_*` veya `VAULT_*` değişkenleri ile environment değerleri otomatik yüklenir (detaylar `docs/SECRETS.md`).
+
 ### Agent
 
 ```
 CONTROL_PLANE_URL=https://cp.example.com
 AGENT_TOKEN=...
+AGENT_METRICS_ADDR=:9102
+AGENT_STATE_DIR=/var/lib/vpn-agent
+AGENT_MAX_RETRY_INTERVAL=2m
 MTLS_CA_PEM=base64:...
 MTLS_CLIENT_CERT=base64:...
 MTLS_CLIENT_KEY=base64:...
 WG_INTERFACE=wg0
 WG_PORT=51820
+WG_ADDRESS=10.0.0.2/32
+WG_DNS=1.1.1.1,8.8.8.8
+WG_ENABLE_NAT=true
+WG_ENABLE_KILLSWITCH=false
 ```
 
 ### Frontend
@@ -199,27 +216,44 @@ go run ./cmd/api
 ### Uç Noktalar (Özet)
 
 ```
-POST   /auth/signup
-POST   /auth/login
-GET    /plans
-POST   /checkout/session
-POST   /webhooks/stripe
-GET    /regions
-GET    /regions/{id}/capacity
-GET    /peers
-POST   /peers
-DELETE /peers/{peerId}
-GET    /peers/{peerId}/config  # tek-kullanımlık imzalı URL + QR
-GET    /account/usage
+POST   /api/v1/auth/signup
+POST   /api/v1/auth/login
+POST   /api/v1/auth/refresh
+POST   /api/v1/auth/password-reset/request
+POST   /api/v1/auth/password-reset/confirm
+GET    /api/v1/plans
+POST   /api/v1/checkout
+POST   /api/v1/webhooks/stripe
+GET    /api/v1/regions
+POST   /api/v1/nodes/register
+POST   /api/v1/nodes/health
+GET    /api/v1/peers
+GET    /api/v1/peers/usage
+POST   /api/v1/peers
+PATCH  /api/v1/peers/{peerId}
+DELETE /api/v1/peers/{peerId}
+GET    /api/v1/peers/config/{token}  # tek-kullanımlık imzalı URL + QR
+GET    /api/v1/account/payments
 ```
 
-### Örnek Yanıt: `/peers/{peerId}/config`
+### Örnek Yanıt: `/api/v1/peers/config/{token}`
 
 ```json
 {
-  "name": "iPhone-Emre",
-  "conf_url": "https://api.example.com/configs/one-time/abcd...",
-  "expires_at": "2025-10-01T12:00:00Z"
+  "config": "[Interface]..."
+}
+```
+
+### Örnek Yanıt: `/api/v1/peers/usage`
+
+```json
+{
+  "total_bytes_tx": 15874432,
+  "total_bytes_rx": 20893440,
+  "total_bytes": 36767872,
+  "peer_count": 3,
+  "active_peer_count": 2,
+  "last_handshake_at": "2025-01-01T10:15:00Z"
 }
 ```
 
@@ -257,6 +291,23 @@ services:
 * Keepalive, MTU, DNS, AllowedIPs konfigleri
 * Sağlık metriklerini Prometheus’a export etme
 * Arıza durumunda **drain** sinyali
+* `AGENT_STATE_DIR` altında peer konfiglerini kalıcı tutma (crash-safe)
+
+### Sağlık ve Metrikler
+
+* Control plane’e gönderilen health payload’ı şu alanları içerir:
+  * `peer_count`, `active_peer_count`, `handshake_ratio`
+  * `rx_bytes`/`tx_bytes` ve hesaplanan `rx_bps`/`tx_bps`
+  * `last_handshake` zaman damgası (UTC)
+  * `drain` → node’un yeni peer kabul edip etmediği
+* Prometheus endpoint’i `AGENT_METRICS_ADDR` adresinde (`default: :9102`) `/metrics` yolunda aşağıdaki metrikleri sağlar:
+  * `node_agent_wireguard_peers`, `node_agent_wireguard_active_peers`
+  * `node_agent_wireguard_handshake_ratio`
+  * `node_agent_wireguard_rx_bytes_total` / `_tx_bytes_total`
+  * `node_agent_wireguard_rx_throughput_bps` / `_tx_throughput_bps`
+  * `node_agent_wireguard_last_handshake`
+* Ayrıntılı açıklama için `docs/NODE_AGENT_METRICS.md` dosyasına bakın.
+* Drain modu için `AGENT_STATE_DIR` altında `drain` dosyasını oluşturmak yeterli (`touch $AGENT_STATE_DIR/drain`); silmek drain’i kapatır.
 
 ---
 
@@ -313,16 +364,22 @@ pnpm start
 
 ## İzleme ve Günlükler
 
-* **Prometheus** metrikleri: CPU/RAM, NIC throughput, aktif peer, handshake error, p50/p95 latency.
-* **Grafana** panoları: Bölge ve node bazlı.
+* **Prometheus** endpoint: `GET /metrics` (varsayılan), `METRICS_*` ortam değişkenleri ile özelleştirilebilir.
+* **HTTP metrikleri**: `http_requests_total`, `http_request_duration_seconds` label seti (method/path/status).
+* **İstek logları**: `LOG_REQUEST_*` env ayarları ile maskelenebilir; hassas alanlar `***` olarak yazılır.
+* **Grafana** panoları: Bölge ve node bazlı (metrics scrape sonrası).
 * **Loki**: API ve Agent günlükleri.
 * **Alertmanager**: Node down, webhook failure, error oranı artışı.
+
+Detaylı bilgi için `docs/OBSERVABILITY.md` dosyasına bakın.
 
 ---
 
 ## Güvenlik
 
-* mTLS, JWT, ratelimit ve hCaptcha
+* mTLS, JWT, route bazlı ratelimit, CORS allowlist, SOPS/Vault tabanlı secrets ve hCaptcha doğrulaması
+* CSRF guard: origin allowlist’e uymayan POST/PUT/PATCH/DELETE istekleri bloklanır
+* Release ikilileri cosign ile imzalanır ve `COSIGN_PUBLIC_KEY` tanımlıysa pipeline içinde doğrulanır; imza dosyaları GitHub Release’e `.sig` olarak yüklenir
 * Admin panel IP allowlist
 * Config URL’leri **tek kullanım** ve **24 saat TTL**
 * Gizli anahtarlar: SOPS/age veya Vault
