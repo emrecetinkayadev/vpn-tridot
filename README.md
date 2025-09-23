@@ -137,21 +137,7 @@ repo-root/
 ### Backend
 
 ```
-APP_ENV=dev|staging|prod
-APP_BASE_URL=https://example.com
-JWT_SECRET=...
-POSTGRES_DSN=postgres://user:pass@host:5432/db?sslmode=disable
-REDIS_URL=redis://:pass@host:6379/0
-STRIPE_SECRET=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-IYZICO_API_KEY=...
-IYZICO_SECRET_KEY=...
-EMAIL_PROVIDER=postmark|ses
-EMAIL_API_KEY=...
-MTLS_CA_PEM=base64:...
-MTLS_SERVER_CERT=base64:...
-MTLS_SERVER_KEY=base64:...
-CONFIG_URL_TTL=24h
+# Ayrıntılı örnek dosyalar için `backend/.env.example`, `backend/.env.development` ve `deploy/.env.production.example` dosyalarına bakın.
 ```
 
 ### Agent
@@ -291,7 +277,7 @@ pnpm start
 ### Sayfalar
 
 * `/signup`, `/login`
-* `/plans` → Stripe/Iyzico checkout
+* `/plans` → Stripe checkout (Iyzico devreye alınacak)
 * `/regions` → kapasite puanları
 * `/devices` → peer listesi, oluştur/sil, QR/CONF indir
 * `/account` → kullanım görünümü
@@ -320,7 +306,7 @@ pnpm start
 ## Ödeme Entegrasyonları
 
 * **Stripe**: Global kartlar, abonelik planları, webhook doğrulama.
-* **Iyzico**: TR yerel kartlar, taksit ve BKM desteği. Webhook ile abonelik aktif etme.
+* **Iyzico**: İleride devreye alınacak (API anahtarları `.env` içinde yer alır).
 * Başarılı ödeme → `subscriptions.status=active` → cihaz/peer hakkı açılır.
 
 ---

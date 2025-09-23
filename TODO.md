@@ -3,41 +3,41 @@
 > Biçim: GitHub task list. `[ ]` açık, `[x]` tamam. Alt görevler iç içe listelenmiştir.
 
 ## 0) Proje Hazırlık ve Altyapı
-- [ ] Monorepo oluşturma
-  - [ ] `backend/`, `frontend/`, `node-agent/`, `infra/`, `deploy/`, `docs/`, `ops/`, `scripts/`
-  - [ ] CODEOWNERS, `.editorconfig`, `.gitignore`, `.gitattributes`
-  - [ ] Pre-commit hook’ları (gitleaks, golangci-lint, eslint)
+- [x] Monorepo oluşturma
+  - [x] `backend/`, `frontend/`, `node-agent/`, `infra/`, `deploy/`, `docs/`, `ops/`, `scripts/`
+  - [x] CODEOWNERS, `.editorconfig`, `.gitignore`, `.gitattributes`
+  - [x] Pre-commit hook’ları (gitleaks, golangci-lint, eslint)
 - [ ] CI iskeleti
-  - [ ] `ci-backend.yaml` build+test
+  - [x] `ci-backend.yaml` build+test
   - [ ] `ci-frontend.yaml` build+test+playwright (staging)
-  - [ ] `ci-agent.yaml` build+unit
-  - [ ] `security-scan.yaml` (gitleaks, syft/grype)
+  - [x] `ci-agent.yaml` build+unit
+  - [x] `security-scan.yaml` (gitleaks, syft/grype)
   - [ ] `release.yaml` (tag → image push → GH Release)
-- [ ] Devcontainer ve VSCode önerileri (`.devcontainer/`, `.vscode/`)
+- [x] Devcontainer ve VSCode önerileri (`.devcontainer/`, `.vscode/`)
 
 ## 1) Backend (Control Plane, Go)
-- [ ] Proje iskeleti ve temel bağımlılıklar
-  - [ ] HTTP server (Gin/Fiber), middleware (auth, ratelimit, logging)
-  - [ ] Config yükleme (env + defaults)
-- [ ] Veritabanı ve migrasyonlar (Postgres)
-  - [ ] Şema: users, plans, subscriptions, payments, regions, nodes, peers, sessions
-  - [ ] Goose/Atlas ile `0001_init.sql`…
-  - [ ] DB indexleri ve foreign key’ler
-- [ ] Kimlik ve oturum
-  - [ ] Sign‑up, login, email doğrulama
-  - [ ] JWT access/refresh akışı
-  - [ ] Şifre sıfırlama
-  - [ ] 2FA/TOTP (v1.1, opsiyon)
-- [ ] Planlar ve ödeme (Stripe + Iyzico)
-  - [ ] Plan CRUD (seed: Aylık/3A/Yıllık)
-  - [ ] Checkout oturumu oluşturma
-  - [ ] Webhook doğrulama ve idempotent işlem
-  - [ ] Abonelik durum geçişleri (`trialing|active|canceled|past_due`)
-  - [ ] Fatura geçmişi görünümü (özet meta)
-- [ ] Bölge ve kapasite
-  - [ ] Regions listesi (TR‑IST, TR‑IZM, EU‑FRA/NL)
-  - [ ] Node kayıt/sağlık uç noktaları
-  - [ ] Kapasite puanı hesaplama (aktif peer, throughput, CPU)
+- [x] Proje iskeleti ve temel bağımlılıklar
+  - [x] HTTP server (Gin/Fiber), middleware (auth, ratelimit, logging)
+  - [x] Config yükleme (env + defaults)
+- [x] Veritabanı ve migrasyonlar (Postgres)
+  - [x] Şema: users, plans, subscriptions, payments, regions, nodes, peers, sessions
+  - [x] Goose/Atlas ile `0001_init.sql`…
+  - [x] DB indexleri ve foreign key’ler
+- [x] Kimlik ve oturum
+  - [x] Sign‑up, login, email doğrulama
+  - [x] JWT access/refresh akışı
+  - [x] Şifre sıfırlama
+  - [x] 2FA/TOTP (v1.1, opsiyon)
+- [x] Planlar ve ödeme (Stripe + Iyzico)
+  - [x] Plan CRUD (seed: Aylık/3A/Yıllık)
+  - [x] Checkout oturumu oluşturma
+  - [x] Webhook doğrulama ve idempotent işlem
+  - [x] Abonelik durum geçişleri (`trialing|active|canceled|past_due`)
+  - [x] Fatura geçmişi görünümü (özet meta)
+- [x] Bölge ve kapasite
+  - [x] Regions listesi (TR‑IST, TR‑IZM, EU-FRA/NL)
+  - [x] Node kayıt/sağlık uç noktaları
+  - [x] Kapasite puanı hesaplama (aktif peer, throughput, CPU)
 - [ ] Peer/cihaz yönetimi
   - [ ] Peer CRUD (kullanıcı başına cihaz limiti)
   - [ ] Client‑side public key kabulü ve doğrulama

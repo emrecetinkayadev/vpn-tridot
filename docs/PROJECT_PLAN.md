@@ -414,7 +414,8 @@ run:
 ## 11) Yol Haritası ve Milestone’lar
 
 * **M1 (Hafta 1–2):** Monorepo iskelet, auth iskelet, DB migrasyonları, Stripe sandbox.
-* **M2 (Hafta 3–4):** Agent mTLS, peer CRUD, config/QR, Terraform+Ansible staging.
+* **M2 (Hafta 3–4):** Agent mTLS, peer CRUD, config/QR, Terraform+Ansible staging, Stripe webhook MVP.
+* **M3 (Hafta 5–6):** Bölge seed + node health uçları, capacity skoru, ödeme raporlama.
 * **M3 (Hafta 5–6):** İzleme, alerting, SSS, leak/load testleri.
 * **M4 (Hafta 7–8):** Kapalı beta, fiyatlandırma, dokümantasyon ve runbook’lar.
 
@@ -463,4 +464,3 @@ run:
 
 * Mobil uygulamalar (v1.1) için `mobile/` klasörü hazırlanabilir (Flutter/React Native).
 * Obfuscation protokolleri (v1.2) için `transport/` modülü ve ayrı `gateway` hizmeti planlanır.
-
