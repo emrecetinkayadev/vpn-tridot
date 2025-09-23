@@ -8,8 +8,66 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: production
+    env:
+      SOPS_SECRETS_FILE_B64: ${{ secrets.SOPS_SECRETS_FILE_B64 }}
+      SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+      VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+      VAULT_PATH: ${{ secrets.VAULT_PATH }}
+      VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
+      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+      - name: Install secret tooling
+        if: env.SOPS_SECRETS_FILE_B64 != '' || env.VAULT_TOKEN != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sops jq curl
+      - name: Bootstrap secrets
+        if: env.SOPS_SECRETS_FILE_B64 != '' || env.VAULT_TOKEN != ''
+        env:
+          SOPS_SOURCE: /tmp/backend.secrets.enc
+          SOPS_TARGET: /tmp/backend.secrets.json
+        run: |
+          set -euo pipefail
+          if [[ -n "${SOPS_SECRETS_FILE_B64}" ]]; then
+            if [[ -z "${SOPS_AGE_KEY}" ]]; then
+              echo "SOPS_AGE_KEY must be provided when SOPS_SECRETS_FILE_B64 is set" >&2
+              exit 1
+            fi
+            echo "${SOPS_SECRETS_FILE_B64}" | base64 -d > "${SOPS_SOURCE}"
+            AGE_KEY_FILE=$(mktemp)
+            printf '%s' "${SOPS_AGE_KEY}" > "${AGE_KEY_FILE}"
+            export SOPS_AGE_KEY_FILE="${AGE_KEY_FILE}"
+            SOPS_SOURCE="${SOPS_SOURCE}" SOPS_TARGET="${SOPS_TARGET}" ./tools/secrets/sops-decrypt.sh
+            {
+              echo "SOPS_SECRETS_ENABLED=true"
+              echo "SOPS_SECRETS_PATH=${SOPS_TARGET}"
+              echo "SOPS_SECRETS_FORMAT=json"
+            } >> "${GITHUB_ENV}"
+          fi
+
+          if [[ -n "${VAULT_TOKEN}" ]]; then
+            export VAULT_ADDR="${VAULT_ADDR:-https://vault.example.com}"
+            export VAULT_TOKEN
+            export VAULT_PATH="${VAULT_PATH:-kv/data/vpn-backend/prod}"
+            export VAULT_NAMESPACE="${VAULT_NAMESPACE}"
+            TARGET_FILE=/tmp/vault.env VAULT_ADDR="${VAULT_ADDR}" VAULT_TOKEN="${VAULT_TOKEN}" VAULT_PATH="${VAULT_PATH}" VAULT_NAMESPACE="${VAULT_NAMESPACE}" ./tools/secrets/vault-export.sh
+            while IFS= read -r line; do
+              [[ -z "${line}" ]] && continue
+              echo "${line}" >> "${GITHUB_ENV}"
+            done < /tmp/vault.env
+          fi
+
+          echo "SECRETS_BOOTSTRAPPED=true" >> "${GITHUB_ENV}"
+      - name: Install cosign
+        if: env.COSIGN_PRIVATE_KEY != ''
+        uses: sigstore/cosign-installer@v3
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -32,10 +90,30 @@ jobs:
         run: |
           echo "## Release ${GITHUB_REF##*/}" > RELEASE_NOTES.md
           echo "- TODO: add highlights" >> RELEASE_NOTES.md
+      - name: Sign artifacts
+        if: env.COSIGN_PRIVATE_KEY != ''
+        env:
+          COSIGN_PASSWORD: ${{ env.COSIGN_PASSWORD }}
+        run: |
+          set -euo pipefail
+          KEY_FILE=$(mktemp)
+          printf '%s' "${COSIGN_PRIVATE_KEY}" > "${KEY_FILE}"
+          cosign sign-blob --key "${KEY_FILE}" --output-signature backend/dist/backend.sig backend/dist/backend
+          cosign sign-blob --key "${KEY_FILE}" --output-signature node-agent/dist/agent.sig node-agent/dist/agent
+      - name: Verify signatures
+        if: env.COSIGN_PUBLIC_KEY != ''
+        run: |
+          set -euo pipefail
+          KEY_FILE=$(mktemp)
+          printf '%s' "${COSIGN_PUBLIC_KEY}" > "${KEY_FILE}"
+          cosign verify-blob --key "${KEY_FILE}" --signature backend/dist/backend.sig backend/dist/backend
+          cosign verify-blob --key "${KEY_FILE}" --signature node-agent/dist/agent.sig node-agent/dist/agent
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           body_path: RELEASE_NOTES.md
           files: |
             backend/dist/backend
+            backend/dist/backend.sig
             node-agent/dist/agent
+            node-agent/dist/agent.sig

@@ -80,7 +80,7 @@ pnpm -C frontend i
 
 * Confirm before running shell commands or package installs.
 * Zero Trust policy. 
-* Read‑only: `docs/**`, `backend/internal/storage/postgres/migrations/**`.
+* Read‑only: existing files under `docs/**` and `backend/internal/storage/postgres/migrations/**`. You may add new `.md` docs under `docs/` when needed; avoid rewriting existing docs unless asked.
 * FS scope: `backend/`, `frontend/`, `node-agent/`, `infra/`, `deploy/`, `ops/`, `scripts/`, `docs/`.
 * Network allowlist: `api.github.com`, `registry.npmjs.org`, `pypi.org`, `files.pythonhosted.org`, `dl.google.com`, `objects.githubusercontent.com`. Block others by default.
 * Secrets required (from env or Vault/SOPS): `POSTGRES_DSN`, `REDIS_URL`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `IYZICO_API_KEY`, `IYZICO_SECRET_KEY`, `JWT_SECRET`, `MTLS_CA_PEM`, `MTLS_SERVER_CERT`, `MTLS_SERVER_KEY`.
@@ -101,16 +101,14 @@ pnpm -C frontend i
 
 ## Runbooks
 
-* `docs/runbooks/incident-node-down.md`
-* `docs/runbooks/rotate-wg-keys.md`
-* `docs/runbooks/restore-db.md`
+* House runbooks under `docs/runbooks/` (add files when created, e.g., `incident-node-down.md`, `rotate-wg-keys.md`, `restore-db.md`).
 
 ## Knowledge
 
-* PRD: `docs/product/prd.md`
-* Architecture: `docs/architecture.md`
-* Project plan: `docs/PROJECT_PLAN.md`
-* Structure: `docs/PROJECT_STRUCTURE.md`
+* Product overview: `PRD.md` (root).
+* Guide for contributors: `README.md`.
+* Current docs: `docs/PROJECT_PLAN.md`, `docs/SECURITY.md`, `docs/OBSERVABILITY.md`, `docs/SECRETS.md`.
+* Add more references in `docs/` (architecture, privacy, ADRs) as materials become available.
 
 ---
 

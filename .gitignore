@@ -14,10 +14,16 @@ dist/
 build/
 coverage/
 .tmp/
+*.tsbuildinfo
 
 backend/bin/
 node-agent/bin/
 frontend/.vercel/
+
+# Local runtimes
+tools/node-v*/
+
+.cache/
 
 # Logs & runtime
 *.log

@@ -13,11 +13,61 @@ on:
 jobs:
   lint-test:
     runs-on: ubuntu-latest
+    environment: staging
+    env:
+      SOPS_SECRETS_FILE_B64: ${{ secrets.SOPS_SECRETS_FILE_B64 }}
+      SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+      VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+      VAULT_PATH: ${{ secrets.VAULT_PATH }}
+      VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: "1.22"
+      - name: Install secret tooling
+        if: env.SOPS_SECRETS_FILE_B64 != '' || env.VAULT_TOKEN != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sops jq curl
+      - name: Bootstrap secrets
+        if: env.SOPS_SECRETS_FILE_B64 != '' || env.VAULT_TOKEN != ''
+        env:
+          SOPS_SOURCE: /tmp/backend.secrets.enc
+          SOPS_TARGET: /tmp/backend.secrets.json
+        run: |
+          set -euo pipefail
+          if [[ -n "${SOPS_SECRETS_FILE_B64}" ]]; then
+            if [[ -z "${SOPS_AGE_KEY}" ]]; then
+              echo "SOPS_AGE_KEY must be provided when SOPS_SECRETS_FILE_B64 is set" >&2
+              exit 1
+            fi
+            echo "${SOPS_SECRETS_FILE_B64}" | base64 -d > "${SOPS_SOURCE}"
+            AGE_KEY_FILE=$(mktemp)
+            printf '%s' "${SOPS_AGE_KEY}" > "${AGE_KEY_FILE}"
+            export SOPS_AGE_KEY_FILE="${AGE_KEY_FILE}"
+            SOPS_SOURCE="${SOPS_SOURCE}" SOPS_TARGET="${SOPS_TARGET}" ./tools/secrets/sops-decrypt.sh
+            {
+              echo "SOPS_SECRETS_ENABLED=true"
+              echo "SOPS_SECRETS_PATH=${SOPS_TARGET}"
+              echo "SOPS_SECRETS_FORMAT=json"
+            } >> "${GITHUB_ENV}"
+          fi
+
+          if [[ -n "${VAULT_TOKEN}" ]]; then
+            export VAULT_ADDR="${VAULT_ADDR:-https://vault.example.com}"
+            export VAULT_TOKEN
+            export VAULT_PATH="${VAULT_PATH:-kv/data/vpn-backend/ci}"
+            export VAULT_NAMESPACE="${VAULT_NAMESPACE}"
+            TARGET_FILE=/tmp/vault.env VAULT_ADDR="${VAULT_ADDR}" VAULT_TOKEN="${VAULT_TOKEN}" VAULT_PATH="${VAULT_PATH}" VAULT_NAMESPACE="${VAULT_NAMESPACE}" ./tools/secrets/vault-export.sh
+            while IFS= read -r line; do
+              [[ -z "${line}" ]] && continue
+              echo "${line}" >> "${GITHUB_ENV}"
+            done < /tmp/vault.env
+          fi
+
+          echo "SECRETS_BOOTSTRAPPED=true" >> "${GITHUB_ENV}"
       - name: Install tools
         run: go install github.com/securego/gosec/v2/cmd/gosec@latest
       - name: Go fmt check
