@@ -91,6 +91,7 @@
 - [ ] Hesap/kullanım sayfası (toplam trafik, son bağlantı)
 - [ ] Hata ve durum sayfaları
 - [ ] E2E testleri (Playwright): cihaz oluşturma akışı
+  - [x] Smoke testi: dashboard başlığının görünmesi
 
 ## 4) Altyapı Otomasyonu
 - [ ] Terraform
