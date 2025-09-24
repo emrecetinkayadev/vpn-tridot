@@ -101,19 +101,28 @@ jobs:
           cosign sign-blob --key "${KEY_FILE}" --output-signature backend/dist/backend.sig backend/dist/backend
           cosign sign-blob --key "${KEY_FILE}" --output-signature node-agent/dist/agent.sig node-agent/dist/agent
       - name: Verify signatures
-        if: env.COSIGN_PUBLIC_KEY != ''
+        if: env.COSIGN_PRIVATE_KEY != '' && env.COSIGN_PUBLIC_KEY != ''
         run: |
           set -euo pipefail
           KEY_FILE=$(mktemp)
           printf '%s' "${COSIGN_PUBLIC_KEY}" > "${KEY_FILE}"
           cosign verify-blob --key "${KEY_FILE}" --signature backend/dist/backend.sig backend/dist/backend
           cosign verify-blob --key "${KEY_FILE}" --signature node-agent/dist/agent.sig node-agent/dist/agent
+      - name: Prepare release files
+        id: release_files
+        run: |
+          set -euo pipefail
+          files=("backend/dist/backend" "node-agent/dist/agent")
+          if [[ -n "${COSIGN_PRIVATE_KEY}" ]]; then
+            files+=("backend/dist/backend.sig" "node-agent/dist/agent.sig")
+          fi
+          {
+            echo "list<<EOF"
+            printf '%s\n' "${files[@]}"
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           body_path: RELEASE_NOTES.md
-          files: |
-            backend/dist/backend
-            backend/dist/backend.sig
-            node-agent/dist/agent
-            node-agent/dist/agent.sig
+          files: ${{ steps.release_files.outputs.list }}
