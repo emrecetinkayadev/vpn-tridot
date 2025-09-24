@@ -9,7 +9,7 @@
   - [x] Pre-commit hook’ları (gitleaks, golangci-lint, eslint)
 - [ ] CI iskeleti
   - [x] `ci-backend.yaml` build+test
-  - [ ] `ci-frontend.yaml` build+test+playwright (staging)
+  - [x] `ci-frontend.yaml` build+test+playwright (staging)
   - [x] `ci-agent.yaml` build+unit
   - [x] `security-scan.yaml` (gitleaks, syft/grype)
   - [x] `release.yaml` (tag → image push → GH Release)

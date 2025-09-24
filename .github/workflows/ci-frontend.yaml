@@ -34,3 +34,14 @@ jobs:
       - name: Test
         working-directory: frontend
         run: pnpm test
+      - name: Build
+        working-directory: frontend
+        run: pnpm build
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: pnpm exec playwright install --with-deps
+      - name: E2E (Playwright)
+        working-directory: frontend
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ vars.FRONTEND_STAGING_BASE_URL }}
+        run: pnpm exec playwright test
