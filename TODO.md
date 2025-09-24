@@ -12,7 +12,7 @@
   - [ ] `ci-frontend.yaml` build+test+playwright (staging)
   - [x] `ci-agent.yaml` build+unit
   - [x] `security-scan.yaml` (gitleaks, syft/grype)
-  - [ ] `release.yaml` (tag → image push → GH Release)
+  - [x] `release.yaml` (tag → image push → GH Release)
 - [x] Devcontainer ve VSCode önerileri (`.devcontainer/`, `.vscode/`)
 
 ## 1) Backend (Control Plane, Go)
