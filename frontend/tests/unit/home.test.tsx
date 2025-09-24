@@ -5,6 +5,6 @@ import Home from "@/app/page";
 describe("Home", () => {
   it("renders headline", () => {
     render(<Home />);
-    expect(screen.getByText(/VPN MVP Dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Operations overview/i)).toBeInTheDocument();
   });
 });

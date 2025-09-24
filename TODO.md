@@ -81,7 +81,7 @@
   - [ ] Entegrasyon: backend mTLS çağrıları (mock CA)
 
 ## 3) Frontend (Next.js 15)
-- [ ] UI iskeleti, tema, navigasyon
+- [x] UI iskeleti, tema, navigasyon
 - [ ] Auth sayfaları (signup/login, şifre sıfırlama)
 - [ ] Planlar ve ödeme akışı (Stripe/Iyzico checkout)
 - [ ] Bölgeler ve kapasite görünümü
