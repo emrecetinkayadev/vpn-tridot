@@ -83,12 +83,21 @@
 ## 3) Frontend (Next.js 15)
 - [x] UI iskeleti, tema, navigasyon
 - [ ] Auth sayfaları (signup/login, şifre sıfırlama)
+  - [x] Login / signup ekran şablonları
+  - [ ] Şifre sıfırlama akışı
 - [ ] Planlar ve ödeme akışı (Stripe/Iyzico checkout)
+  - [x] Plan kartları + checkout CTA placeholder
+  - [ ] Stripe/Iyzico checkout entegrasyonu
 - [ ] Bölgeler ve kapasite görünümü
+  - [x] Bölge tablosu ve kapasite yer tutucuları
+  - [ ] Prometheus/agent verileri ile besleme
 - [ ] Cihazlar/Peers
+  - [x] Cihaz listesi ve görev kuyruğu şablonu
   - [ ] Listele, oluştur, sil, yeniden adlandır
   - [ ] QR/CONF indirme butonları
 - [ ] Hesap/kullanım sayfası (toplam trafik, son bağlantı)
+  - [x] Profil ve kullanım blokları (placeholder)
+  - [ ] Gerçek API entegrasyonu
 - [ ] Hata ve durum sayfaları
 - [ ] E2E testleri (Playwright): cihaz oluşturma akışı
   - [x] Smoke testi: dashboard başlığının görünmesi
