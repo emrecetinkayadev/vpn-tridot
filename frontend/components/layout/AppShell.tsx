@@ -24,6 +24,11 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Dashboard",
         hint: "Traffic, billing, and fleet health",
       },
+      {
+        href: "/status",
+        label: "Status",
+        hint: "Uptime, incidents, maintenance",
+      },
     ],
   },
   {

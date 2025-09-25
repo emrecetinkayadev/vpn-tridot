@@ -1,25 +1,48 @@
+import { useState } from "react";
+
+import { createCheckoutSession } from "@/lib/stripe";
+
 const PLANS = [
   {
     name: "Monthly",
     price: "₺149",
     description: "Billed every month, includes 5 devices",
     features: ["5 peers", "All regions", "Email support"],
+    code: "vpn-monthly",
   },
   {
     name: "Quarterly",
     price: "₺399",
     description: "Save 10% with quarterly billing",
     features: ["5 peers", "Priority support", "Early access regions"],
+    code: "vpn-quarterly",
   },
   {
     name: "Annual",
     price: "₺1.399",
     description: "Best value, two months free",
     features: ["5 peers", "Dedicated success", "Usage analytics"],
+    code: "vpn-annual",
   },
 ];
 
 export default function PlansPage() {
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const onCheckout = async (planCode: string) => {
+    try {
+      setIsLoading(planCode);
+      setError(null);
+      const session = await createCheckoutSession(planCode);
+      window.location.href = session.checkoutUrl;
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(null);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <header className="space-y-2">
@@ -28,6 +51,7 @@ export default function PlansPage() {
           Stripe + Iyzico checkout flows will plug in here. For now we expose the pricing skeleton to
           align on copy and layout.
         </p>
+        {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       </header>
 
       <section className="grid gap-4 md:grid-cols-3">
@@ -52,9 +76,10 @@ export default function PlansPage() {
             <button
               type="button"
               className="mt-6 inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700"
-              disabled
+              onClick={() => onCheckout(plan.code)}
+              disabled={Boolean(isLoading)}
             >
-              Checkout coming soon
+              {isLoading === plan.code ? "Yönlendiriliyor..." : "Planı seç"}
             </button>
           </div>
         ))}

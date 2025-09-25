@@ -1,0 +1,81 @@
+{
+  "id": null,
+  "uid": "peers-overview",
+  "title": "Peers Overview",
+  "tags": ["tridot", "ops"],
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Total traffic",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-default"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(node_agent_wireguard_rx_bytes_total[5m]) + rate(node_agent_wireguard_tx_bytes_total[5m]))",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Peers online",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-default"
+      },
+      "targets": [
+        {
+          "expr": "sum(node_agent_wireguard_peers)",
+          "refId": "A",
+          "legendFormat": "Peers"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Top peers by throughput",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-default"
+      },
+      "targets": [
+        {
+          "expr": "topk(10, rate(node_agent_wireguard_tx_bytes_total[5m]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "region",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus-default"
+        },
+        "definition": "label_values(node_agent_wireguard_active_peers, region)",
+        "multi": true,
+        "refresh": 1
+      }
+    ]
+  }
+}

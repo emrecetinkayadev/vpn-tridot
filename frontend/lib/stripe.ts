@@ -1,16 +1,25 @@
-import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { env } from "@/lib/env";
 
-let stripePromise: Promise<Stripe | null> | null = null;
+export type CheckoutResponse = {
+  provider: "stripe" | "iyzico";
+  checkoutUrl: string;
+};
 
-export function getStripe(): Promise<Stripe | null> {
-  if (!stripePromise) {
-    const publicKey = process.env.NEXT_PUBLIC_STRIPE_PK;
-    if (!publicKey) {
-      return Promise.resolve(null);
-    }
+export async function createCheckoutSession(planCode: string): Promise<CheckoutResponse> {
+  const response = await fetch("/api/checkout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ planCode }),
+  });
 
-    stripePromise = loadStripe(publicKey);
+  if (!response.ok) {
+    throw new Error("Checkout oturumu oluşturulamadı");
   }
-
-  return stripePromise;
+  return response.json();
 }
+
+export const stripeEnv = {
+  publishableKey: env.stripePublishableKey,
+};

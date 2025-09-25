@@ -161,6 +161,13 @@ Güvenlik politikası, raporlama süreci, hardening kuralları ve olay yönetimi
 * **Yeni sürüm**: testler → SBOM → imza → staging canary → prod rollout → izleme.
 * **Gizli rotasyonu**: KMS/sops anahtarları → mTLS cert → WG anahtarı → erişim tokenları.
 
+## 19) Yönetici Erişim Kontrolleri
+
+* Admin panel uçları için IP allowlist tanımlayın: `ADMIN_IP_ALLOWLIST="203.0.113.10,198.51.100.0/24"`
+* CIDR desteği vardır; değerler virgülle ayrılmalıdır.
+* Allowlist boş ise kontrol devre dışıdır (varsayılan).
+* Tüm isabetler Prometheus metrikleriyle birlikte 403 olarak loglanır.
+
 ---
 
 ### Örnek `security.txt`
@@ -174,4 +181,3 @@ Acknowledgments: https://yourdomain.example/security/hall-of-fame
 ```
 
 > Sorular için: **[security@yourdomain.example](mailto:security@yourdomain.example)**. Bu dosya değiştikçe `CHANGELOG.md` içinde not düşülür.
-

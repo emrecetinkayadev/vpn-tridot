@@ -1,0 +1,9 @@
+[
+  {
+    "labels": {
+      "env": "{{ agent_env | default('staging') }}",
+      "instance": "{{ inventory_hostname }}"
+    },
+    "targets": ["{{ ansible_host }}:{{ wireguard_metrics_port | default(9100) }}"]
+  }
+]

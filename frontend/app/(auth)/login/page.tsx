@@ -1,3 +1,5 @@
+import { HCaptchaWidget } from "@/components/forms/HCaptchaWidget";
+
 export default function LoginPage() {
   return (
     <div className="mx-auto max-w-sm space-y-6">
@@ -37,6 +39,7 @@ export default function LoginPage() {
             Forgot password?
           </button>
         </div>
+        <HCaptchaWidget />
         <button
           type="submit"
           className="w-full rounded-lg border border-slate-600 bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white"

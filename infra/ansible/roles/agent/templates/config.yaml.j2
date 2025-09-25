@@ -1,0 +1,16 @@
+controlPlane:
+  url: {{ agent_control_plane_url }}
+  registerPath: /api/v1/nodes/register
+  healthPath: /api/v1/nodes/health
+  timeout: 5s
+
+provision:
+  token: {{ agent_provision_token }}
+
+mtls:
+  ca: {{ agent_mtls_ca | to_nice_yaml(indent=2) }}
+  cert: {{ agent_mtls_cert | to_nice_yaml(indent=2) }}
+  key: {{ agent_mtls_key | to_nice_yaml(indent=2) }}
+
+agent:
+  pollInterval: 30s

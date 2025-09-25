@@ -1,0 +1,85 @@
+{
+  "id": null,
+  "uid": "nodes-overview",
+  "title": "Nodes Overview",
+  "tags": ["tridot", "ops"],
+  "timezone": "",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Active peers",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-default"
+      },
+      "targets": [
+        {
+          "expr": "sum(node_agent_wireguard_active_peers)",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Handshake success ratio",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-default"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        }
+      },
+      "targets": [
+        {
+          "expr": "avg(node_agent_wireguard_handshake_ratio)",
+          "refId": "A",
+          "legendFormat": "{{region}}"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 6, "y": 0 }
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Node health",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-default"
+      },
+      "targets": [
+        {
+          "expr": "up{job=\"node-agent\"}",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 6 }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "region",
+        "type": "query",
+        "hide": 0,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus-default"
+        },
+        "definition": "label_values(node_agent_wireguard_active_peers, region)",
+        "refresh": 1,
+        "multi": true
+      }
+    ]
+  }
+}

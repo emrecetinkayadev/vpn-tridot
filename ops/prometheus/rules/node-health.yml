@@ -1,0 +1,48 @@
+groups:
+  - name: node-health
+    interval: 30s
+    rules:
+      - alert: NodeAgentDown
+        expr: up{job="node-agent"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: network
+        annotations:
+          summary: "Node agent {{ $labels.instance }} is unreachable"
+          description: |
+            Prometheus has not scraped the node agent exporter at {{ $labels.instance }} for >2 minutes.
+            Investigate the WireGuard node health before customer sessions drain.
+      - alert: HandshakeErrorSpike
+        expr: rate(node_agent_wireguard_handshake_failures_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          team: network
+        annotations:
+          summary: "Handshake errors spiking on {{ $labels.instance }}"
+          description: |
+            WireGuard handshake failures exceeded 5/min for the past 5 minutes.
+            Check peers in {{ $labels.region }} for connectivity issues.
+      - alert: WebhookFailureBurst
+        expr: increase(vpn_backend_http_requests_total{path="/api/v1/webhooks/stripe",status=~"5.."}[5m]) > 3
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Webhook endpoint returns errors"
+          description: |
+            Stripe webhook endpoint is returning ≥4 errors within 5 minutes.
+            Investigate billing service logs and Stripe dashboard for failing events.
+      - alert: BackendErrorRateHigh
+        expr: sum(rate(vpn_backend_http_requests_total{status=~"5.."}[5m])) / sum(rate(vpn_backend_http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Backend 5xx oranı %5'in üzerinde"
+          description: |
+            Backend API'de 5 dakikalık pencerede 5xx hata oranı %5 eşiğini aştı.
+            İstek loglarını ve son deploy'u kontrol edin.

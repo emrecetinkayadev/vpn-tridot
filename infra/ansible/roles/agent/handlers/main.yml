@@ -1,0 +1,5 @@
+---
+- name: Restart tridot agent
+  ansible.builtin.systemd:
+    name: tridot-agent.service
+    state: restarted

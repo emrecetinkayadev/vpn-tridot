@@ -58,3 +58,5 @@ tools/sbom/*.spdx
 
 # Misc
 *.DS_Store
+
+scripts/mtls/build/

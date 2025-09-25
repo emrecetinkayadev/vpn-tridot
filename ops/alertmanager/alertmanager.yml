@@ -1,0 +1,20 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: console
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 3h
+  group_by: [alertname, region]
+
+receivers:
+  - name: console
+    # Varsayılan olarak UI üzerinden izleyin veya ileride Slack/PagerDuty entegrasyonu ekleyin.
+
+inhibit_rules:
+  - source_match:
+      severity: critical
+    target_match:
+      severity: warning
+    equal: [alertname, region]

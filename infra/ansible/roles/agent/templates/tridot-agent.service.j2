@@ -1,0 +1,14 @@
+[Unit]
+Description=TriDot VPN Node Agent
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/tridot-agent
+ExecStart=/opt/tridot-agent/agent --config /etc/tridot/agent.yaml
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

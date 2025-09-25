@@ -1,0 +1,26 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Install base packages
+  ansible.builtin.package:
+    name:
+      - curl
+      - jq
+      - htop
+    state: present
+
+- name: Configure sysctl parameters
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/99-tridot.conf
+    content: |
+      net.ipv4.ip_forward = 1
+      net.ipv6.conf.all.forwarding = 1
+      net.ipv4.conf.all.rp_filter = 2
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload sysctl

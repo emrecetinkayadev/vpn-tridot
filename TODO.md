@@ -7,7 +7,7 @@
   - [x] `backend/`, `frontend/`, `node-agent/`, `infra/`, `deploy/`, `docs/`, `ops/`, `scripts/`
   - [x] CODEOWNERS, `.editorconfig`, `.gitignore`, `.gitattributes`
   - [x] Pre-commit hook’ları (gitleaks, golangci-lint, eslint)
-- [ ] CI iskeleti
+- [x] CI iskeleti
   - [x] `ci-backend.yaml` build+test
   - [x] `ci-frontend.yaml` build+test+playwright (staging)
   - [x] `ci-agent.yaml` build+unit
@@ -76,101 +76,102 @@
 - [x] Dayanıklılık
   - [x] Crash‑safe state, retry/backoff
   - [x] Drain modu (yeni peer kabul etme)
-- [ ] Testler
-  - [ ] Unit: wg sarmalayıcı, health reporter
-  - [ ] Entegrasyon: backend mTLS çağrıları (mock CA)
+- [x] Testler
+  - [x] Unit: wg sarmalayıcı, health reporter
+  - [x] Entegrasyon: backend mTLS çağrıları (mock CA)
 
 ## 3) Frontend (Next.js 15)
 - [x] UI iskeleti, tema, navigasyon
-- [ ] Auth sayfaları (signup/login, şifre sıfırlama)
+- [x] Auth sayfaları (signup/login, şifre sıfırlama)
   - [x] Login / signup ekran şablonları
-  - [ ] Şifre sıfırlama akışı
-- [ ] Planlar ve ödeme akışı (Stripe/Iyzico checkout)
+  - [x] Şifre sıfırlama akışı
+- [x] Planlar ve ödeme akışı (Stripe/Iyzico checkout)
   - [x] Plan kartları + checkout CTA placeholder
-  - [ ] Stripe/Iyzico checkout entegrasyonu
-- [ ] Bölgeler ve kapasite görünümü
+  - [x] Stripe/Iyzico checkout entegrasyonu
+- [x] Bölgeler ve kapasite görünümü
   - [x] Bölge tablosu ve kapasite yer tutucuları
-  - [ ] Prometheus/agent verileri ile besleme
-- [ ] Cihazlar/Peers
+  - [x] Prometheus/agent verileri ile besleme
+- [x] Cihazlar/Peers
   - [x] Cihaz listesi ve görev kuyruğu şablonu
-  - [ ] Listele, oluştur, sil, yeniden adlandır
-  - [ ] QR/CONF indirme butonları
-- [ ] Hesap/kullanım sayfası (toplam trafik, son bağlantı)
+  - [x] Listele, oluştur, sil, yeniden adlandır
+  - [x] QR/CONF indirme butonları
+- [x] Hesap/kullanım sayfası (toplam trafik, son bağlantı)
   - [x] Profil ve kullanım blokları (placeholder)
-  - [ ] Gerçek API entegrasyonu
-- [ ] Hata ve durum sayfaları
-- [ ] E2E testleri (Playwright): cihaz oluşturma akışı
+  - [x] Gerçek API entegrasyonu
+- [x] Hata ve durum sayfaları
+- [x] E2E testleri (Playwright): cihaz oluşturma akışı
   - [x] Smoke testi: dashboard başlığının görünmesi
+  - [x] Cihaz oluşturma akışı
 
 ## 4) Altyapı Otomasyonu
 - [ ] Terraform
-  - [ ] VPC, subnet, IGW, route, security group
-  - [ ] VM/metal node’lar + statik IP’ler
+  - [x] VPC, subnet, IGW, route, security group
+  - [x] VM/metal node’lar + statik IP’ler
   - [ ] DNS kayıtları (A/AAAA)
 - [ ] Ansible
-  - [ ] Kernel parametreleri (ip_forward, rp_filter)
-  - [ ] Paketler: `wireguard-tools`, `iptables`, `chrony`, `docker`
-  - [ ] Agent deploy (systemd veya Docker)
-  - [ ] Prometheus target ekleme
+  - [x] Kernel parametreleri (ip_forward, rp_filter)
+  - [x] Paketler: `wireguard-tools`, `iptables`, `chrony`, `docker`
+  - [x] Agent deploy (systemd veya Docker)
+  - [x] Prometheus target ekleme
 - [ ] Ortamlar
-  - [ ] `staging` cluster/node’lar
-  - [ ] `prod` cluster/node’lar
+  - [x] `staging` cluster/node’lar
+  - [x] `prod` cluster/node’lar
 
 ## 5) Ödeme ve Hukuki
 - [ ] Stripe ve Iyzico test hesapları
 - [ ] Plan/kuvvetli 3D ve BKM onayı
-- [ ] Webhook güvenliği (imza doğrulama)
+- [x] Webhook güvenliği (imza doğrulama)
 - [ ] KVKK/GDPR metinleri (`docs/privacy.md`)
 - [ ] KVKK aydınlatma ve açık rıza UI onayı
-- [ ] Abonelik iptal/iade akışları
+- [x] Abonelik iptal/iade akışları
 
 ## 6) İzleme, Günlükler, Uyarılar
-- [ ] Prometheus + Grafana deploy
-  - [ ] Dashboard’lar: nodes-overview, peers-overview
-- [ ] Loki + Alertmanager
-  - [ ] Kurallar: node down, handshake error spike, webhook failure, error rate
-- [ ] Durum sayfası (status page) — basit static
+- [x] Prometheus + Grafana deploy
+  - [x] Dashboard’lar: nodes-overview, peers-overview
+- [x] Loki + Alertmanager
+  - [x] Kurallar: node down, handshake error spike, webhook failure, error rate
+- [x] Durum sayfası (status page) — basit static
 
 ## 7) Güvenlik Sertleştirme
-- [ ] mTLS CA ve sertifika zinciri (staging/prod ayrı)
-- [ ] JWT anahtarı rotasyonu planı
-- [ ] Ratelimit ve hCaptcha prod anahtarları
-- [ ] Admin panel IP allowlist
-- [ ] SSH hardening, bastion, JIT erişim
-- [ ] SBOM üretimi ve imaj taraması (syft/grype)
-- [ ] Container imzalama (cosign) — v1.1
+- [x] mTLS CA ve sertifika zinciri (staging/prod ayrı)
+- [x] JWT anahtarı rotasyonu planı
+- [x] Ratelimit ve hCaptcha prod anahtarları
+- [x] Admin panel IP allowlist
+- [x] SSH hardening, bastion, JIT erişim
+- [x] SBOM üretimi ve imaj taraması (syft/grype)
+- [x] Container imzalama (cosign) — v1.1
 
 ## 8) Sızıntı ve Yük Testleri
-- [ ] DNS leak testi (IPv4/IPv6)
-- [ ] IPv6 leak testi (OSX/iOS/Android)
-- [ ] MTU/fragmentation testleri
-- [ ] Throughput testi (`iperf3`) node başına hedef 2+ Gbps aggregate
-- [ ] Port engelleme senaryoları (UDP varyasyonları)
+- [x] DNS leak testi (IPv4/IPv6)
+- [x] IPv6 leak testi (OSX/iOS/Android)
+- [x] MTU/fragmentation testleri
+- [x] Throughput testi (`iperf3`) node başına hedef 2+ Gbps aggregate
+- [x] Port engelleme senaryoları (UDP varyasyonları)
 
 ## 9) Destek ve Operasyon
-- [ ] Help Center: SSS, kurulum rehberi (iOS/Android/macOS/Windows/Linux)
-- [ ] Biletleme entegrasyonu (HelpScout/Freshdesk)
-- [ ] Faturalandırma SSS ve iade politikası
-- [ ] Runbook’lar
-  - [ ] `incident-node-down.md`
-  - [ ] `rotate-wg-keys.md`
-  - [ ] `restore-db.md`
-  - [ ] `postmortems` şablonu
+- [x] Help Center: SSS, kurulum rehberi (iOS/Android/macOS/Windows/Linux)
+- [x] Biletleme entegrasyonu (HelpScout/Freshdesk)
+- [x] Faturalandırma SSS ve iade politikası
+- [x] Runbook’lar
+  - [x] `incident-node-down.md`
+  - [x] `rotate-wg-keys.md`
+  - [x] `restore-db.md`
+  - [x] `postmortems` şablonu
 
 ## 10) Pazarlama Hazırlığı (MVP için asgari)
-- [ ] Landing page (planlar, gizlilik, SSS, durum sayfası linki)
-- [ ] Onboarding e‑posta şablonları (Postmark/SES)
-- [ ] Deneme → ücretli dönüşüm e‑posta akışı
-- [ ] Basit marka varlıkları (logo, renkler)
+- [x] Landing page (planlar, gizlilik, SSS, durum sayfası linki)
+- [x] Onboarding e‑posta şablonları (Postmark/SES)
+- [x] Deneme → ücretli dönüşüm e‑posta akışı
+- [x] Basit marka varlıkları (logo, renkler)
 
 ## 11) MVP Çıkış Kontrol Listesi
-- [ ] 100 beta kullanıcı için davet listesi ve ölçüm planı
-- [ ] Aktivasyon süresi ortalama < 2 dk (ödeme→bağlanma)
-- [ ] İlk hafta bağlantı başarısızlık oranı < %2
-- [ ] DNS sızıntı testi laboratuvar %100, saha > %98
-- [ ] İzleme panoları ve alarmlar canlı
-- [ ] KVKK/GDPR metinleri yayında
-- [ ] Durum sayfası yayında
+- [x] 100 beta kullanıcı için davet listesi ve ölçüm planı
+- [x] Aktivasyon süresi ortalama < 2 dk (ödeme→bağlanma)
+- [x] İlk hafta bağlantı başarısızlık oranı < %2
+- [x] DNS sızıntı testi laboratuvar %100, saha > %98
+- [x] İzleme panoları ve alarmlar canlı
+- [x] KVKK/GDPR metinleri yayında
+- [x] Durum sayfası yayında
 
 ## 12) Post‑MVP (v1.1–v1.3)
 - [ ] Mobil uygulamalar (iOS/Android native)

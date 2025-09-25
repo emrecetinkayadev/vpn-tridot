@@ -1,0 +1,10 @@
+- labels:
+    env: staging
+    region: tr-ist
+  targets:
+    - wg-node-1.staging.tridot:9187
+- labels:
+    env: staging
+    region: tr-izm
+  targets:
+    - wg-node-2.staging.tridot:9187

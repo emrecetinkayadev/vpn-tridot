@@ -128,6 +128,7 @@ type SecurityConfig struct {
 	CORS     CORSConfig
 	CSRF     CSRFConfig
 	Secrets  SecretsConfig
+	Admin    AdminSecurityConfig
 }
 
 type HCaptchaConfig struct {
@@ -158,6 +159,10 @@ type CSRFConfig struct {
 type SecretsConfig struct {
 	SOPS  SOPSConfig
 	Vault VaultConfig
+}
+
+type AdminSecurityConfig struct {
+	IPAllowlist []string
 }
 
 type SOPSConfig struct {
@@ -322,6 +327,7 @@ func Load() (Config, error) {
 	}
 	cfg.Security.HCaptcha.ScoreThreshold = threshold
 	cfg.Security.HCaptcha.Endpoint = getEnv("HCAPTCHA_ENDPOINT", "https://hcaptcha.com/siteverify")
+	cfg.Security.Admin.IPAllowlist = stringSliceFromEnv("ADMIN_IP_ALLOWLIST", "")
 
 	corsEnabled, err := boolFromEnv("CORS_ENABLED", true)
 	if err != nil {

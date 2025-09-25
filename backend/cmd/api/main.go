@@ -89,7 +89,7 @@ func main() {
 	authService := auth.NewService(authRepo, hasher, jwtManager, cfg.Auth)
 	hcaptchaVerifier := hcaptcha.New(cfg.Security.HCaptcha)
 	authHandler := authhandler.New(authService, hcaptchaVerifier, logger)
-	authMiddleware := middleware.Auth(jwtManager, logger)
+	authMiddleware := middleware.Auth(jwtManager, cfg.Security.Admin, logger)
 
 	regionsRepo := postgres.NewRegionsRepository(store.Pool())
 	regionsService := regions.NewService(regionsRepo, cfg)
