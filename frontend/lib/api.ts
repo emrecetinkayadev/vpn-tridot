@@ -40,6 +40,15 @@ export class ApiClient {
   }
 }
 
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    return "";
+  }
+  return process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+};
+
 export const defaultApiClient = new ApiClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE ?? "",
+  baseUrl: getBaseUrl(),
 });

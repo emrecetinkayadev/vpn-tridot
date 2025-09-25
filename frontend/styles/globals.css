@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #1e293b;
+  --color-brand-accent: #38bdf8;
+}
 
 :root {
   color-scheme: light dark;

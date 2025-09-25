@@ -1,22 +1,20 @@
+import { defaultApiClient } from "@/lib/api";
+
+interface Account {
+  profile: {
+    owner: string;
+    twoFactor: string;
+    lastLogin: string;
+  };
+  usage: {
+    totalTraffic: string;
+    lastSession: string;
+    activePeers: number;
+  };
+}
+
 async function fetchAccount() {
-  const baseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE ?? "";
-  const url = `${baseUrl}/api/account`.replace(/\/\/api/, "/api");
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error("Account verisi yüklenemedi");
-  }
-  return response.json() as Promise<{
-    profile: {
-      owner: string;
-      twoFactor: string;
-      lastLogin: string;
-    };
-    usage: {
-      totalTraffic: string;
-      lastSession: string;
-      activePeers: number;
-    };
-  }>;
+  return defaultApiClient.get<Account>("/api/account", { cache: "no-store" });
 }
 
 export default async function AccountPage() {

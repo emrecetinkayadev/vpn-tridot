@@ -1,22 +1,20 @@
+import { defaultApiClient } from "@/lib/api";
+
 const STATUS_VARIANTS: Record<string, string> = {
   online: "bg-emerald-500/20 text-emerald-200",
   planned: "bg-amber-500/20 text-amber-200",
   degraded: "bg-rose-500/20 text-rose-200",
 };
 
+interface Region {
+  name: string;
+  status: string;
+  capacity: string;
+  peers: number;
+}
+
 async function fetchRegions() {
-  const baseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE ?? "";
-  const url = `${baseUrl}/api/regions`.replace(/\/\/api/, "/api");
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error("Regions data yüklenemedi");
-  }
-  return (await response.json()) as Array<{
-    name: string;
-    status: string;
-    capacity: string;
-    peers: number;
-  }>;
+  return defaultApiClient.get<Region[]>("/api/regions", { cache: "no-store" });
 }
 
 export default async function RegionsPage() {
