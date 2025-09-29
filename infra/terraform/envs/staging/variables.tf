@@ -30,3 +30,9 @@ variable "ssh_key_name" {
   description = "EC2 key pair"
   default     = "tridot-staging"
 }
+
+variable "dns_zone_name" {
+  type        = string
+  description = "Route53 hosted zone name that holds staging records"
+  default     = "tridot.dev"
+}

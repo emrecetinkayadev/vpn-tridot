@@ -104,10 +104,10 @@
   - [x] Cihaz oluşturma akışı
 
 ## 4) Altyapı Otomasyonu
-- [ ] Terraform
+- [x] Terraform
   - [x] VPC, subnet, IGW, route, security group
   - [x] VM/metal node’lar + statik IP’ler
-  - [ ] DNS kayıtları (A/AAAA)
+  - [x] DNS kayıtları (A/AAAA)
 - [ ] Ansible
   - [x] Kernel parametreleri (ip_forward, rp_filter)
   - [x] Paketler: `wireguard-tools`, `iptables`, `chrony`, `docker`
@@ -121,8 +121,8 @@
 - [ ] Stripe ve Iyzico test hesapları
 - [ ] Plan/kuvvetli 3D ve BKM onayı
 - [x] Webhook güvenliği (imza doğrulama)
-- [ ] KVKK/GDPR metinleri (`docs/privacy.md`)
-- [ ] KVKK aydınlatma ve açık rıza UI onayı
+- [x] KVKK/GDPR metinleri (`docs/privacy.md`)
+- [x] KVKK aydınlatma ve açık rıza UI onayı
 - [x] Abonelik iptal/iade akışları
 
 ## 6) İzleme, Günlükler, Uyarılar
@@ -158,13 +158,59 @@
   - [x] `restore-db.md`
   - [x] `postmortems` şablonu
 
-## 10) Pazarlama Hazırlığı (MVP için asgari)
+## 10) Mobil Uygulamalar (iOS & Android)
+- [ ] Mimari ve proje iskeleti
+  - Sahip: @ayse (Mobile Lead)
+  - Kabul: `apps/mobile` RN projesi iOS/Android için hatasız build edilir; `ui-kit` ve `types` paketleri pnpm ile paylaşılır; CI/CD pipeline nightly build ve smoke test üretir
+  - [ ] Yığın seçimi: Bare React Native (TS) + native WireGuard köprüleri
+  - [ ] Monorepo paket paylaşımı (`ui-kit`, `types`, auth client)
+  - [ ] CI/CD entegrasyonu (EAS + Fastlane, staging/prod kanalları)
+- [ ] Tasarım ve UX
+  - Sahip: @deniz (Product Design)
+  - Kabul: Figma kitinde mobil bileşenler web temasıyla eşleşir; onboarding akışları prototiplenip ≥5 kullanıcı ile test edilir; i18n anahtarları TR/EN hazırdır
+  - [ ] Design system uyarlaması (Next.js panel ile tutarlılık)
+  - [ ] Onboarding akışları (plan seçimi, izin isteme, VPN kurulumu)
+  - [ ] Çoklu dil desteği (TR/EN)
+- [ ] Kimlik ve güvenlik
+  - Sahip: @elif (Security)
+  - Kabul: OAuth2/JWT oturumu backend ile entegre; access/refresh tokenları Secure Storage’da şifrelenmiş; biyometrik kilit opsiyonu aktif; deep link’ler sihirli bağlantı ve şifre sıfırlamada çalışır
+  - [ ] OAuth2/JWT akışı → Secure Storage (Keychain/Keystore)
+  - [ ] Biyometrik kilit (FaceID/TouchID, Android biometrics)
+  - [ ] Derin link (sihirli bağlantı, şifre sıfırlama)
+- [ ] VPN bağlantı yönetimi
+  - Sahip: @kerem (Senior Mobile)
+  - Kabul: WireGuardKit/wg-quick üzerinden bağlan/ayır çalışır; peer config’leri backend ile senkron; otomatik yeniden bağlanma 3G/4G/5G geçişlerinde testten geçer; kill-switch ve DNS ayarları UI’dan yönetilir
+  - [ ] WireGuard lib entegrasyonu (iOS: WireGuardKit, Android: Go backend + wg-quick)
+  - [ ] Peer provisioning API çağrıları ve config senkronizasyonu
+  - [ ] Otomatik yeniden bağlanma ve hata geri bildirimi
+  - [ ] DNS/MTU/kill-switch ayarlarının kullanıcıya sunulması
+- [ ] Abonelik ve ödeme
+  - Sahip: @burak (Payments)
+  - Kabul: Backend abonelik durumları mobilde doğru gösterilir; App Store/Play Store satın alma akışları lokalize; makbuz doğrulama backend’de geçer; deneme ve kupon senaryoları QA’dan onaylı
+  - [ ] Backend plan/abonelik durumunun senkronizasyonu
+  - [ ] Mobil uygulama içi yenileme akışları (App Store / Play Store makbuz doğrulama)
+  - [ ] Deneme süresi ve kupon kodlarının desteklenmesi
+- [ ] Kullanıcı paneli
+  - Sahip: @aylin (Frontend Mobile)
+  - Kabul: Trafik ve son bağlantı verileri grafiklerle sunulur; cihaz CRUD işlemleri API’ya bağlı ve offline kuyruk destekli; push bildirimleri OneSignal/Firebase staging ortamında doğrulanır
+  - [ ] Trafik kullanımı ve son bağlantı verileri (grafikler, listeler)
+  - [ ] Cihaz yönetimi (ekle/sil/yeniden adlandır, tek seferlik config indirme)
+  - [ ] Push bildirimleri (abonelik hatırlatma, bağlantı sorunları)
+- [ ] Test ve kalite
+  - Sahip: @cem (QA Lead)
+  - Kabul: Unit test kapsamı ≥ %70; Detox senaryoları temel akışları kapsar; TestFlight/Closed Testing build’leri haftalık yenilenir; Apple/Google mağaza uyumluluk kontrol listeleri tamamlanır
+  - [ ] Unit testler (Jest + React Native Testing Library)
+  - [ ] Enstrümantasyon testleri (Detox/Appium)
+  - [ ] Beta dağıtımı (TestFlight, Closed Testing)
+  - [ ] Store gereksinimleri (VPN izinleri, gizlilik etiketi)
+
+## 11) Pazarlama Hazırlığı (MVP için asgari)
 - [x] Landing page (planlar, gizlilik, SSS, durum sayfası linki)
 - [x] Onboarding e‑posta şablonları (Postmark/SES)
 - [x] Deneme → ücretli dönüşüm e‑posta akışı
 - [x] Basit marka varlıkları (logo, renkler)
 
-## 11) MVP Çıkış Kontrol Listesi
+## 12) MVP Çıkış Kontrol Listesi
 - [x] 100 beta kullanıcı için davet listesi ve ölçüm planı
 - [x] Aktivasyon süresi ortalama < 2 dk (ödeme→bağlanma)
 - [x] İlk hafta bağlantı başarısızlık oranı < %2
@@ -173,8 +219,9 @@
 - [x] KVKK/GDPR metinleri yayında
 - [x] Durum sayfası yayında
 
-## 12) Post‑MVP (v1.1–v1.3)
-- [ ] Mobil uygulamalar (iOS/Android native)
+## 13) Post‑MVP (v1.1–v1.3)
+> Detay plan: `docs/backlog/post-mvp.md`
+- [ ] Mobil uygulamalar: gelişmiş özellikler (multi-hop, widget, Siri/Quick Tile entegrasyonu)
 - [ ] Tarayıcı eklentisi
 - [ ] DNS filtre profilleri (ads/malware)
 - [ ] Obfuscation protokolleri (Hysteria2/TUIC/REALITY)

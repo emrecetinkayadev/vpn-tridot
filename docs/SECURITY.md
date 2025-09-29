@@ -168,6 +168,14 @@ Güvenlik politikası, raporlama süreci, hardening kuralları ve olay yönetimi
 * Allowlist boş ise kontrol devre dışıdır (varsayılan).
 * Tüm isabetler Prometheus metrikleriyle birlikte 403 olarak loglanır.
 
+## 20) Açık Güvenlik İşleri
+
+* Node ↔ kontrol düzlemi trafiği yalnızca mTLS + kısıtlı IP’den geçmeli (`docs/security/guvenlik-onlemleri.md`).
+* Provision token’ları döngüsel üretip register/health uçlarını rate limit ile korun.
+* `/metrics` uç noktasını internal segmente taşıyın veya kimlik doğrulaması ekleyin.
+* Frontend için CSP/HSTS/XFO başlıklarını zorunlu kılın, demo API’lerini üretimde kapatın.
+* Ansible ile dağıtılan agent konfig/binary’si için imza ve sıkı dosya izinleri uygulayın.
+
 ---
 
 ### Örnek `security.txt`

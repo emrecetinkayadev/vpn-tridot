@@ -28,3 +28,39 @@ variable "ssh_key_name" {
   description = "EC2 key pair name"
   default     = "tridot-prod"
 }
+
+variable "dns_zone_name" {
+  type        = string
+  description = "Primary Route53 hosted zone for production records"
+  default     = "tridot.dev"
+}
+
+variable "api_ipv4" {
+  type        = list(string)
+  description = "IPv4 addresses to publish for api.tridot.dev"
+  default     = []
+}
+
+variable "agent_ipv4" {
+  type        = list(string)
+  description = "IPv4 addresses to publish for agent.tridot.dev"
+  default     = []
+}
+
+variable "panel_cname_target" {
+  type        = string
+  description = "CNAME target for panel.tridot.dev (e.g. Vercel/Netlify hostname)"
+  default     = ""
+}
+
+variable "status_page_cname_target" {
+  type        = string
+  description = "CNAME target for status.tridot.dev"
+  default     = ""
+}
+
+variable "ops_cname_target" {
+  type        = string
+  description = "CNAME target for ops.tridot.dev"
+  default     = ""
+}

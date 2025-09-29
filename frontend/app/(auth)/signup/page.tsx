@@ -43,9 +43,32 @@ export default function SignupPage() {
             className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500/40"
           />
         </div>
-        <div className="rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-2 text-xs text-slate-400">
-          By requesting access you agree to our privacy policy and beta support expectations.
-        </div>
+        <fieldset className="space-y-3 rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-3 text-xs text-slate-300">
+          <legend className="sr-only">Privacy and consent</legend>
+          <p className="text-slate-400">
+            We process your personal data according to the TriDot VPN Privacy Notice.
+            See <a className="text-slate-200 underline" href="https://vpn.tridot.dev/privacy" target="_blank" rel="noreferrer">vpn.tridot.dev/privacy</a> for full details or contact <a className="text-slate-200 underline" href="mailto:privacy@tridot.dev">privacy@tridot.dev</a>.
+          </p>
+          <label className="flex items-start gap-3 text-left">
+            <input
+              type="checkbox"
+              required
+              className="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-slate-900 focus:ring-slate-500"
+            />
+            <span>
+              <span className="font-semibold text-slate-200">Mandatory:</span> I read the KVKK/GDPR privacy notice and accept processing of my account and billing data for service delivery.
+            </span>
+          </label>
+          <label className="flex items-start gap-3 text-left">
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-slate-900 focus:ring-slate-500"
+            />
+            <span>
+              <span className="font-semibold text-slate-200">Optional:</span> I consent to receive product updates and beta invitations via e-mail. You can withdraw consent anytime from the account settings or by e-mailing privacy@tridot.dev.
+            </span>
+          </label>
+        </fieldset>
         <HCaptchaWidget />
         <button
           type="submit"

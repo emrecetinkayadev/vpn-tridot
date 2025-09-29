@@ -41,3 +41,24 @@ module "vpn_node" {
   allowed_ssh_cidrs    = var.bastion_ssh_cidrs
   tags                 = var.tags
 }
+
+locals {
+  staging_dns_records = [
+    {
+      name   = "vpn.staging"
+      type   = "A"
+      values = compact([module.vpn_node.public_ip])
+      ttl    = 120
+    }
+  ]
+}
+
+module "dns" {
+  source = "../../modules/dns"
+
+  zone_name   = var.dns_zone_name
+  create_zone = false
+  tags        = var.tags
+
+  records = local.staging_dns_records
+}
